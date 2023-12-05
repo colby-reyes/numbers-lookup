@@ -31,7 +31,7 @@ def get_sharepoint_df(
         sheetname: str,
         username: str,
         password: str,
-        url: str = st.secrets["URL"],
+        url: str,
 ):
     # authenticate
     ctx_auth = AuthenticationContext(url)
@@ -60,7 +60,7 @@ def GetSharepointSpread(
     sheetname: str,
     username: str,
     password: str,
-    url: str = st.secrets["URL"],
+    url: str,
 ):
     try:
         ctx_auth = AuthenticationContext(url)
