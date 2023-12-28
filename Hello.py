@@ -77,12 +77,12 @@ def check_password():
 
 
 def run_dashboard():
-    u_df, p_df = st.session_state.df_list
+    u_df, p_df = 0,1
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
 
     st.title(f"{sel} Lookup")
-    df_select = df_dict[sel]
+    df_select = st.session_state.df_list[df_dict[sel]]
 
     ## SIDEBAR
     # Sidebar Configuration
