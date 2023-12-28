@@ -54,7 +54,7 @@ def get_sharepoint_df(
     # return sharepoint_df
     return df
 
-
+@st.cache_resource(show_spinner=False)
 def GetSharepointSpread(
     url: str,
     username: str,
