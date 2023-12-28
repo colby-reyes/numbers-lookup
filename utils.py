@@ -19,16 +19,15 @@ import io
 import pandas as pd
 from dataclasses import dataclass
 import streamlit as st
+import os
 
 @dataclass
 class VersionInfo:
     version = "1.0.0"
-    description = """`PBG Communications Tracker` version 1.0.0"""
-    author = "Colby Reyes"
-    contact = "colbyr@hs.uci.edu"
+    description = """`Numbers Lookup` version 1.0.0"""
 
 def get_sharepoint_df(
-        sheetname: str,
+        # sheetname: str,
         username: str,
         password: str,
         url: str,
@@ -50,17 +49,16 @@ def get_sharepoint_df(
     bytes_file_obj.seek(0)  # set file object to start
 
     # %% read excel file and each sheet into pandas dataframe
-    df = pd.read_excel(bytes_file_obj, sheet_name=sheetname)
+    df = pd.read_excel(bytes_file_obj)#, sheet_name=sheetname)
 
     # return sharepoint_df
     return df
 
 
 def GetSharepointSpread(
-    sheetname: str,
+    url: str,
     username: str,
     password: str,
-    url: str,
 ):
     try:
         ctx_auth = AuthenticationContext(url)
@@ -69,35 +67,22 @@ def GetSharepointSpread(
             # web = ctx.web
             # ctx.load(web)
             ctx.execute_query()
-            print("Authentication successful")
+            # st.toast("Authentication successful")
 
         response = File.open_binary(ctx, url)
+        print("Authentication successful")
+        st.toast("`reponse` successful")
 
         # %% save data to BytesIO stream
         bytes_file_obj = io.BytesIO()
+        st.toast("`bytes_file_obj` call successful")
         bytes_file_obj.write(response.content)
+        st.toast("write `bytes_file_obj` to context successful")
         bytes_file_obj.seek(0)  # set file object to start
+        st.toast("set file object to start successful")
 
         # %% read excel file and each sheet into pandas dataframe
-        df = pd.read_excel(bytes_file_obj, sheet_name=sheetname)
-        return df
+        df = pd.read_excel(bytes_file_obj)  # , sheet_name=sheetname)
+        return ("Authentication Successful",df)
     except Exception as e:
-        return f"Authentication Error: {e}"
-        # ctx_auth = AuthenticationContext(url)
-        # if ctx_auth.acquire_token_for_user(username, password):
-        #     ctx = ClientContext(url, ctx_auth)
-        #     # web = ctx.web
-        #     # ctx.load(web)
-        #     ctx.execute_query()
-        #     print("Authentication successful")
-
-        # response = File.open_binary(ctx, url)
-
-        # # %% save data to BytesIO stream
-        # bytes_file_obj = io.BytesIO()
-        # bytes_file_obj.write(response.content)
-        # bytes_file_obj.seek(0)  # set file object to start
-
-        # # %% read excel file and each sheet into pandas dataframe
-        # df = pd.read_excel(bytes_file_obj, sheet_name=sheetname)
-        # return df
+        return (f"Error: {e}",None)

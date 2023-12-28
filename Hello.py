@@ -12,26 +12,99 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import streamlit as st
 from streamlit.logger import get_logger
-from utils import GetSharepointSpread,VersionInfo
+from utils import GetSharepointSpread, VersionInfo, get_sharepoint_df
+import hmac
 
 LOGGER = get_logger(__name__)
 
 
-def run():
-    st.set_page_config(
-        page_title="dashboard",
-        page_icon="👋",
+def get_sharepoint_spreadsheets():
+    with st.spinner("Refreshing Data..."):
+        msg1, df1 = GetSharepointSpread(
+            st.secrets.urls.url1,
+            st.secrets.sharepoint_credentials.uname,
+            st.secrets.sharepoint_credentials.pwd,
+        )
+        st.toast(msg1)
+
+        msg2, df2 = GetSharepointSpread(
+            st.secrets.urls.url2,
+            st.secrets.sharepoint_credentials.uname,
+            st.secrets.sharepoint_credentials.pwd,
+        )
+        st.toast(msg2)
+
+        if (df1 is not None) or (df2 is not None):
+            st.session_state.df_list = [df1, df2]
+
+
+def check_password():
+    """Returns `True` if the user had a correct password."""
+
+    def login_form():
+        """Form with widgets to collect user information"""
+        with st.form("Credentials"):
+            st.text_input("Username", key="username")
+            st.text_input("Password", type="password", key="password")
+            st.form_submit_button("Log in", on_click=password_entered)
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["username"] in st.secrets[
+            "passwords"
+        ] and hmac.compare_digest(
+            st.session_state["password"],
+            st.secrets.passwords[st.session_state["username"]],
+        ):
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Don't store the username or password.
+            del st.session_state["username"]
+        else:
+            st.session_state["password_correct"] = False
+
+    # Return True if the username + password is validated.
+    if st.session_state.get("password_correct", False):
+        return True
+
+    # Show inputs for username + password.
+    login_form()
+    if "password_correct" in st.session_state:
+        st.error("😕 User not known or password incorrect")
+    return False
+
+
+def run_dashboard():
+    u_df, p_df = st.session_state.df_list
+    df_dict = {"Current Info":p_df,"Historical Info (UB only)":u_df}
+    sel = st.selectbox("Select Data to View: ",options=df_dict.keys(),index=0)
+    
+    st.title(f"{sel} Lookup")
+    df_select = df_dict[sel]
+
+    ## SIDEBAR
+    # Sidebar Configuration
+    st.sidebar.image(
+        uci_logo_link = "https://www.logolynx.com/images/logolynx/4f/4f42c461be2388aca949521bbb6a64f1.gif",
+        width=200,
     )
+    st.sidebar.markdown(f"# {sel} Lookup")
+    st.sidebar.markdown(
+        f"{sel} by Department and Date"
+        )
+    st.sidebar.markdown("---")
+    st.sidebar.button("Refresh",on_click=get_sharepoint_spreadsheets)
+    
+    
+    st.write(df_select)    
 
-    st.write("# Welcome to the Tracker! 👋")
-    st.write("Please Log In below")
-
-    # login_container = st.container(border=True)
-    # with login_container.form(key="login",border=False):
-    #     st.text_input("Username/Email:")
-    #     st.text_input("Password:",type="password")
+def run():
+    if not check_password():
+        st.stop()
+    get_sharepoint_spreadsheets()
+    run_dashboard()
 
 
 
