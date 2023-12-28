@@ -78,35 +78,31 @@ def check_password():
 
 def run_dashboard():
     u_df, p_df = st.session_state.df_list
-    df_dict = {"Current Info":p_df,"Historical Info (UB only)":u_df}
-    sel = st.selectbox("Select Data to View: ",options=df_dict.keys(),index=0)
-    
+    df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
+    sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
+
     st.title(f"{sel} Lookup")
     df_select = df_dict[sel]
 
     ## SIDEBAR
     # Sidebar Configuration
     st.sidebar.image(
-        uci_logo_link = "https://www.logolynx.com/images/logolynx/4f/4f42c461be2388aca949521bbb6a64f1.gif",
+        "https://www.logolynx.com/images/logolynx/4f/4f42c461be2388aca949521bbb6a64f1.gif",
         width=200,
     )
     st.sidebar.markdown(f"# {sel} Lookup")
-    st.sidebar.markdown(
-        f"{sel} by Department and Date"
-        )
+    st.sidebar.markdown(f"{sel} by Department and Date")
     st.sidebar.markdown("---")
-    st.sidebar.button("Refresh",on_click=get_sharepoint_spreadsheets)
-    
-    
-    st.write(df_select)    
+    st.sidebar.button("Refresh", on_click=get_sharepoint_spreadsheets)
+
+    st.write(df_select)
+
 
 def run():
     if not check_password():
         st.stop()
     get_sharepoint_spreadsheets()
     run_dashboard()
-
-
 
 
 if __name__ == "__main__":
