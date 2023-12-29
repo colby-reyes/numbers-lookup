@@ -15,12 +15,21 @@
 import os
 import streamlit as st
 from streamlit.logger import get_logger
-from utils import GetSharepointSpread, VersionInfo, get_sharepoint_df
+from utils import GetSharepointSpread
 import hmac
 
 LOGGER = get_logger(__name__)
 
+st.set_page_config(
+    page_title="Deposits Reconciliation",
+    page_icon="https://www.logolynx.com/images/logolynx/4f/4f42c461be2388aca949521bbb6a64f1.gif",
+    layout="wide",
+)
 
+if 'df_list' not in st.session_state:
+    st.session_state.df_list = None
+
+# @st.cache_resource()
 def get_sharepoint_spreadsheets():
     with st.spinner("Refreshing Data..."):
         msg1, df1 = GetSharepointSpread(
@@ -37,18 +46,18 @@ def get_sharepoint_spreadsheets():
         )
         st.toast(msg2)
 
-        # if (df1 is not None) or (df2 is not None):
-        #     st.session_state.df_list = [df1, df2]
-        return df1,df2
+        if (df1 is not None) or (df2 is not None):
+            st.session_state.df_list = [df1, df2]
+        # return df1,df2
 
 
-@st.cache_resource(experimental_allow_widgets=True)
 def check_password():
     """Returns `True` if the user had a correct password."""
 
     def login_form():
         """Form with widgets to collect user information"""
-        with st.form("Login"):
+        _,c2,_ = st.columns([1,2,1])
+        with c2.form("Login"):
             st.text_input("Username", key="username")
             st.text_input("Password", type="password", key="password")
             st.form_submit_button("Log in", on_click=password_entered)
@@ -62,6 +71,7 @@ def check_password():
             st.secrets.passwords[st.session_state["username"]],
         ):
             st.session_state["password_correct"] = True
+            get_sharepoint_spreadsheets()
             del st.session_state["password"]  # Don't store the username or password.
             del st.session_state["username"]
         else:
@@ -79,14 +89,14 @@ def check_password():
 
 
 def run_dashboard():
-    # u_df, p_df = 0,1
-    u_df, p_df = get_sharepoint_spreadsheets()
+    u_df, p_df = 0,1
+    # u_df, p_df = get_sharepoint_spreadsheets()
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
 
     st.title(f"{sel} Lookup")
-    # df_select = st.session_state.df_list[df_dict[sel]]
-    df_select = df_dict[sel]
+    df_select = st.session_state.df_list[df_dict[sel]]
+    # df_select = df_dict[sel]
 
     ## SIDEBAR
     # Sidebar Configuration
