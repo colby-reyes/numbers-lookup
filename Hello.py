@@ -99,11 +99,8 @@ def run_dashboard():
     st.write(df_select)
 
 
-def run():
-    if not check_password():
-        st.stop()
-    run_dashboard()
+if not check_password():
+    st.stop()
 
+run_dashboard()
 
-if __name__ == "__main__":
-    run()
