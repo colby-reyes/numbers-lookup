@@ -20,7 +20,7 @@ import hmac
 
 LOGGER = get_logger(__name__)
 
-# @st.cache_resource()
+@st.cache_resource()
 def get_sharepoint_spreadsheets():
     with st.spinner("Refreshing Data..."):
         msg1, df1 = GetSharepointSpread(
