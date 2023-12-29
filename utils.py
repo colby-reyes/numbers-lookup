@@ -71,15 +71,15 @@ def GetSharepointSpread(
 
         response = File.open_binary(ctx, url)
         print("Authentication successful")
-        st.toast("`reponse` successful")
+        #st.toast("`reponse` successful")
 
         # %% save data to BytesIO stream
         bytes_file_obj = io.BytesIO()
-        st.toast("`bytes_file_obj` call successful")
+        #st.toast("`bytes_file_obj` call successful")
         bytes_file_obj.write(response.content)
-        st.toast("write `bytes_file_obj` to context successful")
+        #st.toast("write `bytes_file_obj` to context successful")
         bytes_file_obj.seek(0)  # set file object to start
-        st.toast("set file object to start successful")
+        #st.toast("set file object to start successful")
 
         # %% read excel file and each sheet into pandas dataframe
         df = pd.read_excel(bytes_file_obj)  # , sheet_name=sheetname)

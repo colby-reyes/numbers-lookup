@@ -77,6 +77,7 @@ def check_password():
 
 
 def run_dashboard():
+    get_sharepoint_spreadsheets()
     u_df, p_df = 0,1
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
@@ -101,7 +102,6 @@ def run_dashboard():
 def run():
     if not check_password():
         st.stop()
-    get_sharepoint_spreadsheets()
     run_dashboard()
 
 
