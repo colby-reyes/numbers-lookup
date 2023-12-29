@@ -21,25 +21,25 @@ import hmac
 LOGGER = get_logger(__name__)
 
 # @st.cache_resource()
-# def get_sharepoint_spreadsheets():
-#     with st.spinner("Refreshing Data..."):
-#         msg1, df1 = GetSharepointSpread(
-#             st.secrets.urls.url1,
-#             st.secrets.sharepoint_credentials.uname,
-#             st.secrets.sharepoint_credentials.pwd,
-#         )
-#         st.toast(msg1)
+def get_sharepoint_spreadsheets():
+    with st.spinner("Refreshing Data..."):
+        msg1, df1 = GetSharepointSpread(
+            st.secrets.urls.url1,
+            st.secrets.sharepoint_credentials.uname,
+            st.secrets.sharepoint_credentials.pwd,
+        )
+        st.toast(msg1)
 
-#         msg2, df2 = GetSharepointSpread(
-#             st.secrets.urls.url2,
-#             st.secrets.sharepoint_credentials.uname,
-#             st.secrets.sharepoint_credentials.pwd,
-#         )
-#         st.toast(msg2)
+        msg2, df2 = GetSharepointSpread(
+            st.secrets.urls.url2,
+            st.secrets.sharepoint_credentials.uname,
+            st.secrets.sharepoint_credentials.pwd,
+        )
+        st.toast(msg2)
 
-#         # if (df1 is not None) or (df2 is not None):
-#         #     st.session_state.df_list = [df1, df2]
-#         return df1,df2
+        # if (df1 is not None) or (df2 is not None):
+        #     st.session_state.df_list = [df1, df2]
+        return df1,df2
 
 
 def check_password():
@@ -78,30 +78,8 @@ def check_password():
 
 
 def run_dashboard():
-    @st.cache_resource()
-    def get_sharepoint_spreadsheets():
-        # with st.spinner("Refreshing Data..."):
-        msg1, df1 = GetSharepointSpread(
-            st.secrets.urls.url1,
-            st.secrets.sharepoint_credentials.uname,
-            st.secrets.sharepoint_credentials.pwd,
-        )
-        st.toast(msg1)
-
-        msg2, df2 = GetSharepointSpread(
-            st.secrets.urls.url2,
-            st.secrets.sharepoint_credentials.uname,
-            st.secrets.sharepoint_credentials.pwd,
-        )
-        st.toast(msg2)
-
-        # if (df1 is not None) or (df2 is not None):
-        #     st.session_state.df_list = [df1, df2]
-        return df1,df2
-    #get_sharepoint_spreadsheets()
     # u_df, p_df = 0,1
-    with st.spinner("Loading data..."):
-        u_df, p_df = get_sharepoint_spreadsheets()
+    u_df, p_df = get_sharepoint_spreadsheets()
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
 
