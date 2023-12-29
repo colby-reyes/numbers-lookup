@@ -67,6 +67,7 @@ def check_password():
 
     # Return True if the username + password is validated.
     if st.session_state.get("password_correct", False):
+        get_sharepoint_spreadsheets()
         return True
 
     # Show inputs for username + password.
@@ -77,7 +78,7 @@ def check_password():
 
 
 def run_dashboard():
-    get_sharepoint_spreadsheets()
+    #get_sharepoint_spreadsheets()
     u_df, p_df = 0,1
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
