@@ -68,7 +68,7 @@ def check_password():
 
     # Return True if the username + password is validated.
     if st.session_state.get("password_correct", False):
-        get_sharepoint_spreadsheets()
+        # get_sharepoint_spreadsheets()
         return True
 
     # Show inputs for username + password.
