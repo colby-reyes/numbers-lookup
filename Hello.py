@@ -37,8 +37,8 @@ def get_sharepoint_spreadsheets():
         )
         st.toast(msg2)
 
-        if (df1 is not None) or (df2 is not None):
-            st.session_state.df_list = [df1, df2]
+        # if (df1 is not None) or (df2 is not None):
+        #     st.session_state.df_list = [df1, df2]
 
 
 def check_password():
@@ -79,12 +79,14 @@ def check_password():
 
 def run_dashboard():
     #get_sharepoint_spreadsheets()
-    u_df, p_df = 0,1
+    # u_df, p_df = 0,1
+    u_df, p_df = get_sharepoint_spreadsheets()
     df_dict = {"Current Info": p_df, "Historical Info (UB only)": u_df}
     sel = st.selectbox("Select Data to View: ", options=df_dict.keys(), index=0)
 
     st.title(f"{sel} Lookup")
-    df_select = st.session_state.df_list[df_dict[sel]]
+    # df_select = st.session_state.df_list[df_dict[sel]]
+    df_select = df_dict[sel]
 
     ## SIDEBAR
     # Sidebar Configuration
@@ -100,8 +102,9 @@ def run_dashboard():
     st.write(df_select)
 
 
-if not check_password():
+if check_password():
+    run_dashboard()
+else:
     st.stop()
 
-run_dashboard()
 
