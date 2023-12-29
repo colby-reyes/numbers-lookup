@@ -39,6 +39,7 @@ def get_sharepoint_spreadsheets():
 
         # if (df1 is not None) or (df2 is not None):
         #     st.session_state.df_list = [df1, df2]
+        return df1,df2
 
 
 def check_password():
